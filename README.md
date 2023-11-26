@@ -45,5 +45,3 @@ Our database schema is structured as follows:
 - **User Interface (Web Client):** A web-based interface for visualizing plant data.
 
 ---
-
-This system is a step towards integrating technology with environmental care, making plant maintenance more efficient and data-driven.
