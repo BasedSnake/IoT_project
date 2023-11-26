@@ -1,4 +1,8 @@
 # IoT Smart Plant Monitoring System
+Members:
+- Ossama Elbannaoui
+- Lim Yan Rui
+- Charbel Elias
 
 ## Introduction
 
