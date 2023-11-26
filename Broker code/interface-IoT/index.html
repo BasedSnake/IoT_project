@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Monitor</title>
+    <style>
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            border-radius: 5px;
+            background-image: linear-gradient(to right,
+                                              #ff0000 0%,    /* Red for too dry */
+                                              #fbff00 25%,   /* Blue for approaching optimal */
+                                              #00ff0d 40%,   /* Blue just before optimal */
+                                              /*#5eff00 40%,   /* Green for optimal */
+                                             /* #00ff80 60%,   /* Green for optimal */
+                                              #00ffd5 70%,   /* Blue just after optimal */
+                                              #0000ff 100%); /* Blue for too humid */
+        }
+        .progress {
+            height: 100%;
+            background-color: transparent; /* Make the inner bar transparent to show the gradient underneath */
+        }
+        /* Rest of your CSS */
+    </style>
+</head>
+<body>
+    <div id="app">
+        <h2>{{ plant.name }}</h2>
+        <img :src="plant.imageUrl" alt="Plant Image">
+        <div class="progress-bar">
+            <div class="progress" :style="{ width: plant.moisture + '%' }"></div>
+        </div>
+        <p>Humidity Status: {{ humidityStatus }}</p>
+    </div>
+
+    <!-- Vue and Firebase scripts -->
+    
+    <script>
+        // Assuming credentials.json is in the root directory accessible over HTTP
+        fetch('../credentials.json').then(response => {
+            return response.json();
+        }).then(credentials => {
+            // Initialize Firebase with your credenials from the file
+            firebase.initializeApp(credentials);
+
+            // Vue.js application setup
+            new Vue({
+                el: '#app',
+                data: {
+                    plant: {
+                        name: 'Loading...',
+                        imageUrl: 'https://m.media-amazon.com/images/I/81FWEmVC3UL._AC_UF1000,1000_QL80_.jpg',
+                        moisture: 0  // Default moisture value for demonstration
+                    }
+                },
+                computed: {
+                    humidityStatus: function() {
+                        if (this.plant.moisture < 40) return 'Low';
+                        if (this.plant.moisture >= 40 && this.plant.moisture <= 60) return 'Good';
+                        return 'High';
+                    }
+                },
+                mounted: function() {
+                    var vm = this;
+                    // Set up Firebase listener
+                    firebase.database().ref('plants/plantId').on('value', function(snapshot) {
+                        vm.plant = snapshot.val();
+                    });
+                }
+            });
+        }).catch(error => {
+            console.error("Error loading credentials:", error);
+        });
+    </script>
+</body>
+</html>
